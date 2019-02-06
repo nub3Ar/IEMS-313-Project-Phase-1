@@ -1,16 +1,14 @@
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.feature_selection import VarianceThreshold
 import pandas as pd
 import math
 
 
 ############    SETUP   ############
-
 #importing data using csv
 training_data= pd.read_csv(open('Training_Dataset.csv'))
 validating_data = pd.read_csv(open('Validation_Dataset.csv'))
@@ -47,7 +45,6 @@ print(knn_accuracy)
 
 ############    Linear Regression      ###########
 lm = LinearRegression()
-
 for j in range(2,9):
     x_train, x_test, y_train, y_test = train_test_split(x_tr, y_tr, test_size=j*.1)
     lm.fit(x_train, y_train)
@@ -58,14 +55,18 @@ for j in range(2,9):
 
 
 ############    Logistic Regression   ############
+print('logistic')
 lr = LogisticRegression()
-lr.fit(x_tr, y_tr)
-predicted = lr.predict(x_va)
-score = accuracy_score(y_va, predicted)
-print(score)
+for j in range(2,9):
+    x_train, x_test, y_train, y_test = train_test_split(x_tr, y_tr, test_size=j*.1)
+    lr.fit(x_train, y_train)
+    predicted = lr.predict(x_test)
+    predicted = [1 if x >= 0 else -1 for x in predicted]
+    score = accuracy_score(y_test, predicted)
+    print(score)
 
 
-###########      Linear Regression      ###########
+############      Feature Selection + Logistic Regression     ###########
 reg = LinearRegression()
 R_sq = []
 useful_feature = []
@@ -73,10 +74,19 @@ for i in range(1,dt2-1):
     reg.fit(x_tr.loc[1::,str(i)::], y_tr)
     score = reg.score(x_tr.loc[1::,str(i)::], y_tr)
     R_sq.append(score)
-    if score >= .65:
+    if score >= .1:
         useful_feature.append(str(i))
-
 new_x_tr = x_tr.loc[1::,useful_feature]
+lr = LogisticRegression()
+print('logistic adjusted')
+for j in range(2,9):
+    x_train, x_test, y_train, y_test = train_test_split(new_x_tr, y_tr, test_size=j*.1)
+    lr.fit(x_train, y_train)
+    predicted = lr.predict(x_test)
+    predicted = [1 if x >= 0 else -1 for x in predicted]
+    score = accuracy_score(y_test, predicted)
+    print(score)
+
 
 
 
