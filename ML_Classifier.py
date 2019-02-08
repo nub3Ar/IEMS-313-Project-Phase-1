@@ -10,12 +10,12 @@ import math
 
 ############    SETUP   ############
 #importing data using csv
-#training_dir = input("What's the directory of your training set?")
-#validating_dir = input("What's the directory of your validating set?")
-#training_data= pd.read_csv(open(training_dir))
-#validating_data = pd.read_csv(open(validating_dir))
-training_data= pd.read_csv(open('Training_Dataset.csv'))
-validating_data = pd.read_csv(open('Validation_Dataset.csv'))
+training_dir = input("What's the directory of your training set?")
+validating_dir = input("What's the directory of your validating set?")
+training_data= pd.read_csv(open(training_dir))
+validating_data = pd.read_csv(open(validating_dir))
+#training_data= pd.read_csv(open('Training_Dataset.csv'))
+#validating_data = pd.read_csv(open('Validation_Dataset.csv'))
 #dimensions of the data
 dt1,dt2 = training_data.shape
 dv1,dv2 = validating_data.shape
