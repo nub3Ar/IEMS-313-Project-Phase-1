@@ -38,7 +38,8 @@ for i in range(1,dt2-1):
     threshold_value.append(score)
 print(np.percentile(threshold_value, 10))
 threshold = np.percentile(threshold_value, 10)#(threshold_value.index(max(threshold_value))+1)*.01
-
+if threshold >= .1:
+    threshold = .1
 ############      Feature Selection + Logistic Regression     ###########
 
 #determining the features with low correlation with the response
