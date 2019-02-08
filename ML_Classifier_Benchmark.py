@@ -4,6 +4,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import VarianceThreshold
+from statistics import mean, variance
 import pandas as pd
 import math
 
@@ -67,26 +68,26 @@ for j in range(2,9):
 
 
 ############      Feature Selection + Logistic Regression     ###########
-reg = LinearRegression()
-R_sq = []
-useful_feature = []
-for i in range(1,dt2-1):
-    reg.fit(x_tr.loc[1::,str(i)::], y_tr)
-    score = reg.score(x_tr.loc[1::,str(i)::], y_tr)
-    R_sq.append(score)
-    if score >= .1:
-        useful_feature.append(str(i))
-new_x_tr = x_tr.loc[1::,useful_feature]
-lr = LogisticRegression()
 print('logistic adjusted')
-for j in range(2,9):
-    x_train, x_test, y_train, y_test = train_test_split(new_x_tr, y_tr, test_size=j*.1)
-    lr.fit(x_train, y_train)
-    predicted = lr.predict(x_test)
-    predicted = [1 if x >= 0 else -1 for x in predicted]
-    score = accuracy_score(y_test, predicted)
-    print(score)
-
-
-
-
+for k in range(1,51):
+    reg = LinearRegression()
+    R_sq = []
+    useful_feature = []
+    for i in range(1,dt2-1):
+        reg.fit(x_tr.loc[1::,str(i)::], y_tr)
+        score = reg.score(x_tr.loc[1::,str(i)::], y_tr)
+        R_sq.append(score)
+        if score >= .01*k:
+            useful_feature.append(str(i))
+    new_x_tr = x_tr.loc[1::,useful_feature]
+    lr = LogisticRegression()
+    score = []
+    for j in range(2,9):
+        x_train, x_test, y_train, y_test = train_test_split(new_x_tr, y_tr, test_size=j*.1)
+        lr.fit(x_train, y_train)
+        predicted = lr.predict(x_test)
+        predicted = [1 if x >= 0 else -1 for x in predicted]
+        score.append(accuracy_score(y_test, predicted))
+    average_score = mean(score)
+    var_score =  variance(score)
+    print ('The mean accuracy for threshold', k*.01, 'is', average_score, 'and the variance between the splits is', var_score)
